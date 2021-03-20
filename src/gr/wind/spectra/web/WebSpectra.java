@@ -132,6 +132,7 @@ public class WebSpectra implements InterfaceWebSpectra
 						+ "Get Hierarchy: - Wrong credentials provided - UserName: " + UserName + " Password: "
 						+ Password);
 				//throw new InvalidInputException("User name or Password incorrect!", "Error 100");
+				return;
 			}
 
 			// Check if Required fields are empty
@@ -218,6 +219,7 @@ public class WebSpectra implements InterfaceWebSpectra
 				if (hierItemsGiven.length > maxLevelsOfHierarchy)
 				{
 					//throw new InvalidInputException("More hierarchy levels than expected", "Error 120");
+					return;
 				}
 
 				// If only root Hierarchy is given
@@ -352,7 +354,7 @@ public class WebSpectra implements InterfaceWebSpectra
 
 	@Override
 	@WebMethod
-	@WebResult(name = "Result")
+	@Oneway
 	public void submitOutage(@WebParam(name = "UserName", header = true, mode = Mode.IN) String UserName,
 			@WebParam(name = "Password", header = true, mode = Mode.IN) String Password,
 			@WebParam(name = "RequestID") @XmlElement(required = true) String RequestID,
@@ -394,6 +396,7 @@ public class WebSpectra implements InterfaceWebSpectra
 			{
 				logger.fatal("Could not open connection with database!");
 				//throw new Exception(ex.getMessage());
+				return;
 			}
 		}
 
@@ -407,7 +410,7 @@ public class WebSpectra implements InterfaceWebSpectra
 			} catch (Exception ex)
 			{
 				logger.fatal("Could not open connection with database!");
-				//throw new Exception(ex.getMessage());
+				return; //throw new Exception(ex.getMessage());
 			}
 		}
 
@@ -441,7 +444,7 @@ public class WebSpectra implements InterfaceWebSpectra
 				logger.error(req.getRemoteAddr() + " - ReqID: " + RequestID
 						+ "Submit Outage: - Wrong credentials provided - UserName: " + UserName + " Password: "
 						+ Password);
-				//throw new InvalidInputException("User name or Password incorrect!", "Error 100");
+				return; //throw new InvalidInputException("User name or Password incorrect!", "Error 100");
 			}
 
 			// Check if Required fields are not empty and they contain the desired values
@@ -474,15 +477,15 @@ public class WebSpectra implements InterfaceWebSpectra
 			{
 				if (hf.checkIfEmpty("EndTime", EndTime))
 				{
-					//throw new InvalidInputException("Scheduled incidents should always contain Start Time and End Time",
-					//		"Error 172");
+					return; //throw new InvalidInputException("Scheduled incidents should always contain Start Time and End Time",
+					//	"Error 172");
 				}
 			} else if (Scheduled.equals("No")) // If the submitted incident is NON scheduled then it should NOT contain "EndTime"
 			{
 				if (!hf.checkIfEmpty("EndTime", EndTime))
 				{
-					//throw new InvalidInputException(
-					//		"Non scheduled incidents should not contain End Time during submission", "Error 173");
+					return; //throw new InvalidInputException(
+					//	"Non scheduled incidents should not contain End Time during submission", "Error 173");
 				}
 			}
 
@@ -530,8 +533,8 @@ public class WebSpectra implements InterfaceWebSpectra
 					// If the sumbission contains only root hierarchy then STOP submission
 					if (!myHier.get(i).contains("="))
 					{
-						//throw new InvalidInputException("Cannot submit Incident for an invalid/root only hierarchy",
-						//		"Error 900");
+						return; //throw new InvalidInputException("Cannot submit Incident for an invalid/root only hierarchy",
+						//	"Error 900");
 					}
 
 					// Check Hierarchy Format Key_Value Pairs
@@ -699,9 +702,9 @@ public class WebSpectra implements InterfaceWebSpectra
 
 					if (incidentAlreadyExists)
 					{
-						//throw new InvalidInputException("There is already an openned incident (" + IncidentID
-						//		+ ") that defines outage for AffectedService = " + service + " and HierarchySelected = "
-						//		+ myHier.get(i).toString(), "Error 195");
+						return; //throw new InvalidInputException("There is already an openned incident (" + IncidentID
+						//	+ ") that defines outage for AffectedService = " + service + " and HierarchySelected = "
+						//	+ myHier.get(i).toString(), "Error 195");
 					}
 				}
 			}
@@ -917,7 +920,7 @@ public class WebSpectra implements InterfaceWebSpectra
 										"Integer", "Integer", "Integer", "Integer", "Integer", "Integer" });
 					} catch (SQLException e)
 					{
-						//throw new InvalidInputException("An Error occured during submission of data!", "Error 1500");
+						return; //throw new InvalidInputException("An Error occured during submission of data!", "Error 1500");
 					}
 
 					if (Integer.parseInt(OutageID_String) > 0)
@@ -947,7 +950,7 @@ public class WebSpectra implements InterfaceWebSpectra
 			//return prodElementsList;
 		} catch (Exception e)
 		{
-			//throw e;
+			return; //throw e;
 		} finally
 		{
 			// Send Similar request to Spectra_Reporting server
@@ -994,13 +997,12 @@ public class WebSpectra implements InterfaceWebSpectra
 
 	@Override
 	@WebMethod
-	@WebResult(name = "Result")
+	@Oneway
 	public void getOutageStatus(@WebParam(name = "UserName", header = true, mode = Mode.IN) String UserName,
 			@WebParam(name = "Password", header = true, mode = Mode.IN) String Password,
 			@WebParam(name = "RequestID") @XmlElement(required = true) String RequestID,
 			@WebParam(name = "IncidentID") @XmlElement(required = true) String IncidentID,
 			@WebParam(name = "IncidentStatus") @XmlElement(required = true) String IncidentStatus)
-	//throws Exception, InvalidInputException
 	{
 		Logger logger = LogManager.getLogger(gr.wind.spectra.web.WebSpectra.class.getName());
 		Connection conn = null;
@@ -1022,7 +1024,7 @@ public class WebSpectra implements InterfaceWebSpectra
 			} catch (Exception ex)
 			{
 				logger.fatal("Could not open connection with database!");
-				//throw new Exception(ex.getMessage());
+				return; //throw new Exception(ex.getMessage());
 			}
 		}
 
@@ -1036,7 +1038,7 @@ public class WebSpectra implements InterfaceWebSpectra
 			} catch (Exception ex)
 			{
 				logger.fatal("Could not open connection with database!");
-				//throw new Exception(ex.getMessage());
+				return; //throw new Exception(ex.getMessage());
 			}
 		}
 
@@ -1068,7 +1070,7 @@ public class WebSpectra implements InterfaceWebSpectra
 				logger.error(req.getRemoteAddr() + " - ReqID: " + RequestID
 						+ "Get Outage Status: - Wrong credentials provided - UserName: " + UserName + " Password: "
 						+ Password);
-				//throw new InvalidInputException("User name or Password incorrect!", "Error 100");
+				return; //throw new InvalidInputException("User name or Password incorrect!", "Error 100");
 			}
 
 			// Update Statistics
@@ -1111,7 +1113,7 @@ public class WebSpectra implements InterfaceWebSpectra
 			}
 			if (Integer.parseInt(numOfRows) == 0)
 			{
-				//throw new InvalidInputException("No Results found", "No Results found according to your criteria");
+				return; //throw new InvalidInputException("No Results found", "No Results found according to your criteria");
 			} else
 			{
 				while (rs.next())
@@ -1134,7 +1136,7 @@ public class WebSpectra implements InterfaceWebSpectra
 			//return prodElementsList;
 		} catch (Exception e)
 		{
-			//throw e;
+			return; //throw e;
 		} finally
 		{
 			try
@@ -1166,7 +1168,7 @@ public class WebSpectra implements InterfaceWebSpectra
 
 	@Override
 	@WebMethod
-	@WebResult(name = "Result")
+	@Oneway
 	public void modifyOutage(@WebParam(name = "UserName", header = true, mode = Mode.IN) String UserName,
 			@WebParam(name = "Password", header = true, mode = Mode.IN) String Password,
 			@WebParam(name = "RequestID") @XmlElement(required = true) String RequestID,
@@ -1180,7 +1182,6 @@ public class WebSpectra implements InterfaceWebSpectra
 			@WebParam(name = "Duration") @XmlElement(required = false) String Duration,
 			// Quality, Loss
 			@WebParam(name = "Impact") @XmlElement(required = false) String Impact)
-	//throws Exception, InvalidInputException
 	{
 		Logger logger = LogManager.getLogger(gr.wind.spectra.web.WebSpectra.class.getName());
 		Connection conn = null;
@@ -1203,7 +1204,7 @@ public class WebSpectra implements InterfaceWebSpectra
 			} catch (Exception ex)
 			{
 				logger.fatal("Could not open connection with database!");
-				//throw new Exception(ex.getMessage());
+				return; //throw new Exception(ex.getMessage());
 			}
 		}
 
@@ -1217,7 +1218,7 @@ public class WebSpectra implements InterfaceWebSpectra
 			} catch (Exception ex)
 			{
 				logger.fatal("Could not open connection with database!");
-				//throw new Exception(ex.getMessage());
+				return; //throw new Exception(ex.getMessage());
 			}
 		}
 
@@ -1242,7 +1243,7 @@ public class WebSpectra implements InterfaceWebSpectra
 				logger.error(req.getRemoteAddr() + " - ReqID: " + RequestID
 						+ "Modify Outage: - Wrong credentials provided - UserName: " + UserName + " Password: "
 						+ Password);
-				//throw new InvalidInputException("User name or Password incorrect!", "Error 100");
+				return; //throw new InvalidInputException("User name or Password incorrect!", "Error 100");
 			}
 
 			// Update Statistics
@@ -1356,9 +1357,9 @@ public class WebSpectra implements InterfaceWebSpectra
 				if (!incidentIsScheduled
 						&& (!hf.checkIfEmpty("StartTime", StartTime) || (!hf.checkIfEmpty("EndTime", EndTime))))
 				{
-					//throw new InvalidInputException(
-					//	"The fields of 'Star Time'/'End Time' cannot be modified on non scheduled Outages (Incident: "
-					//		+ IncidentID + ", OutageID " + OutageID + " is not a scheduled incident)",
+					return; //throw new InvalidInputException(
+					//		"The fields of 'Star Time'/'End Time' cannot be modified on non scheduled Outages (Incident: "
+					//			+ IncidentID + ", OutageID " + OutageID + " is not a scheduled incident)",
 					//"Error 385");
 				}
 
@@ -1369,7 +1370,7 @@ public class WebSpectra implements InterfaceWebSpectra
 
 				if (isIncidentClosed)
 				{
-					//throw new InvalidInputException(
+					return; //throw new InvalidInputException(
 					//	"The combination of IncidentID/OutageID is already closed and it cannot be modified - IncidentID: "
 					//		+ IncidentID + " / OutageID: " + OutageID,
 					//"Error 715");
@@ -1385,7 +1386,7 @@ public class WebSpectra implements InterfaceWebSpectra
 							new String[] { "String", "Integer" });
 				} catch (Exception e)
 				{
-					//throw new InvalidInputException("An Error occured during modification of data!", "Error 1500");
+					return; //throw new InvalidInputException("An Error occured during modification of data!", "Error 1500");
 				}
 
 				if (numOfRowsUpdated == 1)
@@ -1400,15 +1401,15 @@ public class WebSpectra implements InterfaceWebSpectra
 				}
 			} else
 			{
-				//throw new InvalidInputException("The combination of IncidentID: " + IncidentID + " and OutageID: "
+				return; //throw new InvalidInputException("The combination of IncidentID: " + IncidentID + " and OutageID: "
 				//	+ OutageID + " does not exist!", "Error 550");
 			}
 
 			// Return instance of class ProductOfModify
-			//return pom;
+			// return pom;
 		} catch (Exception e)
 		{
-			//throw e;
+			return; //throw e;
 		} finally
 		{
 			// Send Similar request to Spectra_Reporting server
@@ -1463,7 +1464,6 @@ public class WebSpectra implements InterfaceWebSpectra
 			@WebParam(name = "UserID") @XmlElement(required = true) String UserID,
 			@WebParam(name = "IncidentID") @XmlElement(required = true) String IncidentID,
 			@WebParam(name = "OutageID") @XmlElement(required = true) String OutageID)
-	//throws Exception, InvalidInputException
 	{
 		Help_Func hf = new Help_Func();
 
@@ -1489,7 +1489,7 @@ public class WebSpectra implements InterfaceWebSpectra
 			} catch (Exception ex)
 			{
 				logger.fatal("Could not open connection with database!");
-				//throw new Exception(ex.getMessage());
+				return; //throw new Exception(ex.getMessage());
 			}
 		}
 
@@ -1503,7 +1503,7 @@ public class WebSpectra implements InterfaceWebSpectra
 			} catch (Exception ex)
 			{
 				logger.fatal("Could not open connection with database!");
-				//throw new Exception(ex.getMessage());
+				return; //throw new Exception(ex.getMessage());
 			}
 		}
 
@@ -1526,7 +1526,7 @@ public class WebSpectra implements InterfaceWebSpectra
 				logger.error(req.getRemoteAddr() + " - ReqID: " + RequestID
 						+ " - Close Outage: - Wrong credentials provided - UserName: " + UserName + " Password: "
 						+ Password);
-				//throw new InvalidInputException("User name or Password incorrect!", "Error 100");
+				return; //throw new InvalidInputException("User name or Password incorrect!", "Error 100");
 			}
 
 			// Update Statistics
@@ -1580,8 +1580,8 @@ public class WebSpectra implements InterfaceWebSpectra
 									new String[] { IncidentID, OutageID }, new String[] { "String", "Integer" });
 						} catch (Exception e)
 						{
-							//throw new InvalidInputException("An Error occured during closure/submission of data!",
-							//		"Error 1500");
+							return; //throw new InvalidInputException("An Error occured during closure/submission of data!",
+							//	"Error 1500");
 						}
 
 					} else
@@ -1600,8 +1600,8 @@ public class WebSpectra implements InterfaceWebSpectra
 									new String[] { "String", "Integer" });
 						} catch (Exception e)
 						{
-							//throw new InvalidInputException("An Error occured during closure/submission of data!",
-							//		"Error 1500");
+							return; //throw new InvalidInputException("An Error occured during closure/submission of data!",
+							//	"Error 1500");
 						}
 					}
 
@@ -1631,16 +1631,16 @@ public class WebSpectra implements InterfaceWebSpectra
 							new String[] { "String", "String" });
 					logger.error(req.getRemoteAddr() + " - ReqID: " + RequestID + " - Close Outage: INCID: "
 							+ IncidentID + " | OutageID: " + OutageID + " is already closed since: " + closedTime);
-					//throw new InvalidInputException("The combination of IncidentID: " + IncidentID + " and OutageID: "
-					//		+ OutageID + " has already been closed since: " + closedTime, "Error 820");
+					return; //throw new InvalidInputException("The combination of IncidentID: " + IncidentID + " and OutageID: "
+					//	+ OutageID + " has already been closed since: " + closedTime, "Error 820");
 				}
 			} else
 			{
 				logger.error(req.getRemoteAddr() + " - ReqID: " + RequestID
 						+ " - Close Outage: The combination of IncidentID: " + IncidentID + " | OutageID: " + OutageID
 						+ " does not exist");
-				//throw new InvalidInputException("The combination of IncidentID: " + IncidentID + " and OutageID: "
-				//		+ OutageID + " does not exist!", "Error 950");
+				return; //throw new InvalidInputException("The combination of IncidentID: " + IncidentID + " and OutageID: "
+						//+ OutageID + " does not exist!", "Error 950");
 			}
 
 			// Send Similar request to Spectra_Reporting server
@@ -1658,7 +1658,7 @@ public class WebSpectra implements InterfaceWebSpectra
 			//return poca;
 		} catch (Exception e)
 		{
-			//throw e;
+			return; //throw e;
 		} finally
 		{
 			try
@@ -1701,7 +1701,6 @@ public class WebSpectra implements InterfaceWebSpectra
 			@WebParam(name = "Service") @XmlElement(required = false) String Service,
 			@WebParam(name = "ServiceL2") @XmlElement(required = false) String ServiceL2,
 			@WebParam(name = "ServiceL3") @XmlElement(required = false) String ServiceL3)
-	//throws Exception, InvalidInputException
 	{
 		Logger logger = LogManager.getLogger(gr.wind.spectra.web.WebSpectra.class.getName());
 		Connection conn = null;
@@ -1725,7 +1724,7 @@ public class WebSpectra implements InterfaceWebSpectra
 			} catch (Exception ex)
 			{
 				logger.fatal("Could not open connection with database!");
-				//throw new Exception(ex.getMessage());
+				return; //throw new Exception(ex.getMessage());
 			}
 		}
 
@@ -1739,7 +1738,7 @@ public class WebSpectra implements InterfaceWebSpectra
 			} catch (Exception ex)
 			{
 				logger.fatal("Could not open connection with database!");
-				//throw new Exception(ex.getMessage());
+				return; //throw new Exception(ex.getMessage());
 			}
 		}
 
@@ -1764,7 +1763,7 @@ public class WebSpectra implements InterfaceWebSpectra
 				logger.error(req.getRemoteAddr() + " - ReqID: " + RequestID
 						+ "NLU Active: - Wrong credentials provided - UserName: " + UserName + " Password: "
 						+ Password);
-				//throw new InvalidInputException("User name or Password incorrect!", "Error 100");
+				return; //throw new InvalidInputException("User name or Password incorrect!", "Error 100");
 			}
 
 			// Check if Required fields are empty
@@ -1787,7 +1786,7 @@ public class WebSpectra implements InterfaceWebSpectra
 
 		} catch (Exception e)
 		{
-			//throw e;
+			return; //throw e;
 		} finally
 		{
 			// Send Similar request to Spectra_Reporting server
