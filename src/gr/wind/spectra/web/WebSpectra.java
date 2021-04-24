@@ -1796,6 +1796,7 @@ public class WebSpectra implements InterfaceWebSpectra
 
 		} catch (Exception e)
 		{
+			System.out.print(e);
 			return; //throw e;
 		} finally
 		{
