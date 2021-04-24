@@ -1782,7 +1782,7 @@ public class WebSpectra implements InterfaceWebSpectra
 			hf.validateNotEmpty("RequestTimestamp", RequestTimestamp);
 			hf.validateDateTimeFormat("RequestTimestamp", RequestTimestamp);
 			hf.validateNotEmpty("CLI", CLI);
-			// Help_Func.validateNotEmpty("Service", Service);
+			// Help_Func.validateNotEmpty("Service", Service)
 
 			// if Impact Value Exists
 			if (!hf.checkIfEmpty("Service", Service))
